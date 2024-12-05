@@ -1,37 +1,43 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Basic Doodle Jump HTML Game</title>
-<meta charset="UTF-8">
+    <title>Basic Doodle Jump HTML Game</title>
+    <meta charset="UTF-8">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<style>
-html, body {
-    height: 100%;
-    margin: 0;
-}
-body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-canvas {
-    border: 1px solid black;
-}
-#score {
-    position: fixed;
-    left: calc(50% - 420px);
-    top: 40px;
-    background-color: white;
-    width: 70px;
-    text-align: center;
-}
-</style>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+
+        #score {
+            position: fixed;
+            left: calc(50% - 420px);
+            top: 40px;
+            background-color: white;
+            width: 70px;
+            text-align: center;
+        }
+    </style>
 </head>
+
 <body>
-<canvas width="900" height="800" id="game"></canvas>
-<span id="score">0</span>
-<script>
-var tickRate = 30;
+    <canvas width="900" height="800" id="game"></canvas>
+    <span id="score">0</span>
+    <script>
+        var tickRate = 30;
 var score = 0
 var keyDown = {};
 var keyMap = {
@@ -53,31 +59,40 @@ const canvas = document.getElementById('game');
 const context = canvas.getContext('2d');
 
 const platformImage = new Image();
-platformImage.src = 'platform.png'; 
+platformImage.src = 'https://quizizzdoodle.pages.dev/platform.png'; 
 
 const blueplatformImage = new Image();
-blueplatformImage.src = 'blue platform.png'; 
+blueplatformImage.src = 'https://quizizzdoodle.pages.dev/blue platform.png'; 
 
 const whiteplatformImage = new Image();
-whiteplatformImage.src = 'white platform.png'; 
+whiteplatformImage.src = 'https://quizizzdoodle.pages.dev/white platform.png'; 
 
 const brownplatformImage = new Image();
-brownplatformImage.src = 'brown platform.png'; 
+brownplatformImage.src = 'https://quizizzdoodle.pages.dev/brown platform.png'; 
 
 const doodleImage = new Image();
-doodleImage.src = 'doodle normal.png'; 
+doodleImage.src = 'https://quizizzdoodle.pages.dev/doodle normal.png'; 
+
+const currentImage = new Image();
+currentImage.src = doodleImage.src
+
+const doodlewithjetpackImage = new Image();
+doodlewithjetpackImage.src = 'https://i.ibb.co/4ZSLx3v/Untitled-design-1.png'; 
+
+const doodlewithflyinghatImage = new Image();
+doodlewithflyinghatImage.src = 'https://i.ibb.co/vdBTYQb/Untitled-design-2.png'; 
 
 const backgroundImage = new Image();
-backgroundImage.src = 'backround.png';
+backgroundImage.src = 'https://quizizzdoodle.pages.dev/backround.png';
 
 const springImage = new Image();
-springImage.src = 'spring.png'; 
+springImage.src = 'https://quizizzdoodle.pages.dev/spring.png'; 
 
 const jetpackImage = new Image();
-jetpackImage.src = 'jetpack.png'; 
+jetpackImage.src = 'https://quizizzdoodle.pages.dev/jetpack.png'; 
 
 const flyinghatImage = new Image();
-flyinghatImage.src = 'flying hat.png'; 
+flyinghatImage.src = 'https://quizizzdoodle.pages.dev/flying hat.png'; 
 
 const platformWidth = 65;
 const platformHeight = 20;
@@ -96,6 +111,13 @@ let platforms = [{
     type: 'normal'
 }];
 
+const platformImages = {
+  'green': platformImage,
+  'blue': blueplatformImage,
+  'brown': brownplatformImage,
+  'white': whiteplatformImage
+};
+
 function random(min, max) {
     return Math.random() * (max - min) + min;
 }
@@ -108,17 +130,15 @@ while (y > 0) {
         x = random(25, canvas.width - 25 - platformWidth);
     } while (y > canvas.height / 2 && x > canvas.width / 2 - platformWidth * 1.5 && x < canvas.width / 2 + platformWidth / 2);
 
-    let platformType = 'normal'; // Default type
-    if (score > 1000) {  // Example: After score 100, new platform types
-        if (Math.random() < 0.05) {
-            platformType = 'brown';
-        } else if (Math.random() < 0.02) {
-            platformType = 'blue';
-        } else if (Math.random() < 0.03) {
-            platformType = 'white';
-        } else {
-            platformType = 'normal';
-        }
+    let platformType = 'normal';
+    // Quadratic probability increase for special platforms
+    const probabilityFactor = Math.min(1, score / 1000); //Cap at 1 to avoid overflow
+    const quadraticProbability = probabilityFactor * probabilityFactor; // Quadratic slowdown
+
+    if (score > 3) {
+        if (Math.random() < 0.1 * quadraticProbability) platformType = 'brown';
+        else if (Math.random() < 0.03 * quadraticProbability) platformType = 'blue';
+        else if (Math.random() < 0.04 * quadraticProbability) platformType = 'white';
     }
 
     platforms.push({ x, y, type: platformType });
@@ -180,16 +200,30 @@ function loop() {
 
         while (platforms[platforms.length - 1].y > 0) {
             let platformType = 'normal';
-            if (score > 100) {
-                if (Math.random() < 0.2) platformType = 'brown';
-                else if (Math.random() < 0.3) platformType = 'blue';
-                else if (Math.random() < 0.4) platformType = 'white';
+            // Quadratic probability increase for special platforms
+            const probabilityFactor = Math.min(1, score / 500); //Cap at 1 to avoid overflow
+            const quadraticProbability = probabilityFactor * probabilityFactor; // Quadratic slowdown
+    
+            if (score > 300) {
+                if (Math.random() < 0.08 * quadraticProbability) platformType = 'brown';
+                else if (Math.random() < 0.1 * quadraticProbability) platformType = 'blue';
+                else if (Math.random() < 0.1 * quadraticProbability) platformType = 'white';
+            }
+            
+            let powerup = null; // Default: no power-up
+            if (Math.random() < 0.1) { // 10% chance
+                powerup = "spring";
+            } else if (Math.random() < 0.002) {
+                powerup = "jetpack"
+            } else if (Math.random() < 0.005) {
+                powerup = "flyinghat"
             }
 
             platforms.push({
                 x: random(25, canvas.width - 25 - platformWidth),
                 y: platforms[platforms.length - 1].y - (platformHeight + random(minPlatformSpace, maxPlatformSpace)),
-                type: platformType
+                type: platformType,
+                powerup: powerup // Add the powerup property here
             });
             minPlatformSpace += 0.03;
             maxPlatformSpace += 0.03;
@@ -224,18 +258,37 @@ function loop() {
     }
 
     platforms.forEach(function(platform) {
+        // Draw spring if present
+        if (platform.powerup === "spring") {
+            context.drawImage(springImage, platform.x + platformWidth / 2 - 10, platform.y - 20, 20, 20);
+        } else if (platform.powerup === "jetpack") {
+            context.drawImage(jetpackImage, platform.x + platformWidth / 2 - 10, platform.y - 20, 20, 20);
+        } else if (platform.powerup === "flyinghat") {
+            context.drawImage(flyinghatImage, platform.x + platformWidth / 2 - 10, platform.y - 20, 20, 20);
+        }
         // Check platform type
         if (platform.type === 'blue') {
-            // Move blue platforms side to side
-            platform.x += random(-1, 1); // This will make the blue platforms move slightly in either direction
-
-            // You can also set limits to prevent the platform from moving off-screen
-            if (platform.x < 0) platform.x = 0;
-            if (platform.x + platformWidth > canvas.width) platform.x = canvas.width - platformWidth;
+            // Ensure speed and direction are defined for each blue platform
+            if (!platform.hasOwnProperty('speed')) platform.speed = 2; // Adjust speed as needed
+            if (!platform.hasOwnProperty('direction')) platform.direction = Math.random() < 0.5 ? -1 : 1;; // 1 for right, -1 for left
+    
+    
+            platform.x += platform.speed * platform.direction;
+    
+            // Reverse direction if it hits the edges
+            if (platform.x < 0) {
+                platform.x = 0;
+                platform.direction = 1;
+            } else if (platform.x + platformWidth > canvas.width) {
+                platform.x = canvas.width - platformWidth;
+                platform.direction = -1;
+            }
         }
 
-        context.drawImage(platformImage, platform.x, platform.y, platformWidth, platformHeight);
+        const imageToUse = platformImages[platform.type] || platformImage; // Default to platformImage if type is unknown
 
+        context.drawImage(imageToUse, platform.x, platform.y, platformWidth, platformHeight);
+        
         // Handle collision with doodle (same as before)
         if (doodle.dy > 0 && prevDoodleY + doodle.height <= platform.y &&
             doodle.x < platform.x + platformWidth && doodle.x + doodle.width > platform.x &&
@@ -258,7 +311,13 @@ function loop() {
 
             doodle.y = platform.y - doodle.height; // Reset doodle position after landing
         }
-
+        
+        if (doodle.dy < 0 && currentImage != doodleImage) {
+            // currentImage = doodleImage;
+        } else {
+            currentImage.src = doodleImage.src
+        }
+        
         // Handle power-ups (spring, jetpack, flyinghat) as before
         if (platform.powerup === "spring" && doodle.dy > 0 &&
             doodle.x < platform.x + platformWidth && doodle.x + doodle.width > platform.x &&
@@ -268,15 +327,16 @@ function loop() {
             doodle.x < platform.x + platformWidth && doodle.x + doodle.width > platform.x &&
             doodle.y < platform.y - 60 && doodle.y + doodle.height > platform.y - 20) {
             doodle.dy = bounceVelocity * 6;
+            currentImage.src = doodlewithjetpackImage.src
         } else if (platform.powerup === "flyinghat" && doodle.dy > 0 &&
             doodle.x < platform.x + platformWidth && doodle.x + doodle.width > platform.x &&
             doodle.y < platform.y - 60 && doodle.y + doodle.height > platform.y - 20) {
             doodle.dy = bounceVelocity * 4;
-        }
+            currentImage.src = doodlewithflyinghatImage.src
+        } 
     });
-
     // Draw doodle
-    context.drawImage(doodleImage, doodle.x, doodle.y, doodle.width, doodle.height);
+    context.drawImage(currentImage, doodle.x, doodle.y, doodle.width, doodle.height);
     
     let verticalDistance = doodle.y - doodle.previousY;
     if (verticalDistance < 0) { // Only increment score when moving upwards
@@ -311,6 +371,7 @@ var tick = function () {
 tick();
 // start the game loop
 requestAnimationFrame(loop);
-</script>
+    </script>
 </body>
+
 </html>
