@@ -224,7 +224,6 @@ function loop() {
                 x: random(25, canvas.width - 25 - platformWidth),
                 y: platforms[platforms.length - 1].y - (platformHeight + random(minPlatformSpace, maxPlatformSpace)),
                 type: platformType,
-                powerup: powerup // Add the powerup property here
             });
             minPlatformSpace += 0.03;
             maxPlatformSpace += 0.03;
