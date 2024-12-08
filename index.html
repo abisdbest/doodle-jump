@@ -1,15 +1,18 @@
 <html>
 <head>
-    <title>Basic Doodle Jump HTML Game</title>
+    <title>Doodle Jump 2</title>
     <meta charset="UTF-8">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Homepage -->
     <div id="background">
         <img id="topImage" src="https://blooket1.pages.dev/drive.google.com/images/doodlejump.png" alt="Top Image">
-        <h1>Doodle Jump</h1>
+        <h1>Doodle Jump 2</h1>
         <div id="platform"></div>
         <div id="character"></div>
         <button id="playButton" onclick="background.style.display = 'none';gamePage.style.display = 'block';requestAnimationFrame(loop);pause=false">Play</button>
@@ -25,9 +28,11 @@
     </div>
 
     <div id="menu" style="display: none;">
-        hi
-        <button onclick="document.getElementById('menu').style.display = 'none';pause=false;requestAnimationFrame(loop)">X</button>
-        <button onclick="gamePage.style.display = 'none';background.style.display = 'block';requestAnimationFrame(loop);document.getElementById('menu').style.display = 'none';">Exit to menu</button>
+        <h3>Your current score is:</h2>
+        <p style="margin-left: 20px; margin-right: 20px;"><span id="scoreonmenu"></span> <br><br><span style="font-size: 15px;">Use the left and right arrow keys to move your character and jump between platforms. Avoid falling off the screen and aim to reach the highest score by jumping as high as possible. Watch out for moving platforms and grab power-ups to boost your jump!<span></p>
+        <button onclick="document.getElementById('menu').style.display = 'none';pause=false;doodle.dy = oldvelocity" class="exitbutton">X</button>
+        <button onclick="pause = false; document.getElementById('menu').style.display = 'none'; resetGame()">restart</button>
+        <button onclick="gamePage.style.display = 'none';background.style.display = 'block';document.getElementById('menu').style.display = 'none';">Exit to menu</button>
     </div>
     <script>
 // Get elements
@@ -38,11 +43,12 @@ const scoreElement = document.getElementById('score');
 
 function menu() {
     pause = true
-    document.getElementById("menu").style.display = "block"
+    document.getElementById("menu").style.display = "flex"
+    document.getElementById("scoreonmenu").innerText = document.getElementById("score").innerText
 }
 function leaderboard() {
     pause = true
-    document.getElementById("leaderboard").style.display = "block"
+    document.getElementById("leaderboard").style.display = "flex"
 }
 
 pause = false
@@ -85,6 +91,9 @@ whiteplatformImage.src = 'white platform.png';
 const brownplatformImage = new Image();
 brownplatformImage.src = 'brown platform.png'; 
 
+const yellowplatformImage = new Image();
+yellowplatformImage.src = 'yellow platform.png'; 
+
 const doodleImage = new Image();
 doodleImage.src = 'doodle normal.png'; 
 
@@ -116,6 +125,7 @@ const platformStart = canvas.height - 50;
 const gravity = 0.33;
 const drag = 0.3;
 const bounceVelocity = -12.5;
+let deltaSeconds
 
 let minPlatformSpace = 15;
 let maxPlatformSpace = 20;
@@ -130,7 +140,8 @@ const platformImages = {
   'green': platformImage,
   'blue': blueplatformImage,
   'brown': brownplatformImage,
-  'white': whiteplatformImage
+  'white': whiteplatformImage,
+  'yellow': yellowplatformImage
 };
 
 function random(min, max) {
@@ -150,12 +161,10 @@ while (y > 0) {
     const probabilityFactor = Math.min(1, score / 1000); //Cap at 1 to avoid overflow
     const quadraticProbability = probabilityFactor * probabilityFactor; // Quadratic slowdown
 
-    if (score > 3) {
-        if (Math.random() < 0.1 * quadraticProbability) platformType = 'brown';
-        else if (Math.random() < 0.03 * quadraticProbability) platformType = 'blue';
-        else if (Math.random() < 0.04 * quadraticProbability) platformType = 'white';
-    }
-
+    if (Math.random() < 0.1 * quadraticProbability) platformType = 'brown';
+    else if (Math.random() < 0.03 * quadraticProbability) platformType = 'blue';
+    else if (Math.random() < 0.04 * quadraticProbability) platformType = 'white';
+    
     platforms.push({ x, y, type: platformType });
 }
 
@@ -197,11 +206,12 @@ function loop(timestamp) {
     const deltaTime = timestamp - lastTimestamp;  // Calculate the time difference between frames
     lastTimestamp = timestamp;  // Update lastTimestamp for the next frame
 
-    const deltaSeconds = deltaTime / 15; // Convert deltaTime to seconds for easier handling
+    deltaSeconds = deltaTime / 15; // Convert deltaTime to seconds for easier handling
 
-    if (!pause) {
-        requestAnimationFrame(loop);
+    if (pause) {
+        deltaSeconds = 0
     }
+    requestAnimationFrame(loop);
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
@@ -227,11 +237,13 @@ function loop(timestamp) {
             const probabilityFactor = Math.min(1, score / 500); //Cap at 1 to avoid overflow
             const quadraticProbability = probabilityFactor * probabilityFactor; // Quadratic slowdown
     
-            if (score > 300) {
+            // if (score > 5) {
+            //     if (Math.random() < 0.08 * quadraticProbability) platformType = 'yellow';
+            // } else if (score > 300) {
                 if (Math.random() < 0.08 * quadraticProbability) platformType = 'brown';
                 else if (Math.random() < 0.1 * quadraticProbability) platformType = 'blue';
                 else if (Math.random() < 0.1 * quadraticProbability) platformType = 'white';
-            }
+            // }
             
             let powerup = null; // Default: no power-up
             if (Math.random() < 0.1) { // 10% chance
@@ -242,14 +254,19 @@ function loop(timestamp) {
                 powerup = "flyinghat"
             }
 
+            if (platformType === 'yellow') {
+                platform.minY = 1;  // You can adjust the range as needed
+                platform.maxY = -1;
+            }
+
             platforms.push({
                 x: random(25, canvas.width - 25 - platformWidth),
                 y: platforms[platforms.length - 1].y - (platformHeight + random(minPlatformSpace, maxPlatformSpace)),
                 type: platformType,
                 powerup: powerup // Add the powerup property here
             });
-            minPlatformSpace += 0.03;
-            maxPlatformSpace += 0.03;
+            minPlatformSpace += 0.01;
+            maxPlatformSpace += 0.01;
             maxPlatformSpace = Math.min(maxPlatformSpace, canvas.height / 2);
         }
     } else {
@@ -289,6 +306,24 @@ function loop(timestamp) {
         } else if (platform.powerup === "flyinghat") {
             context.drawImage(flyinghatImage, platform.x + platformWidth / 2 - 10, platform.y - 20, 20, 20);
         }
+        
+        if (platform.type === 'yellow' || platform.type === 'updown') {
+            // Ensure each platform has unique speed and direction
+            if (!platform.hasOwnProperty('speed')) platform.speed = 2; // Adjust speed for vertical movement
+            if (!platform.hasOwnProperty('direction')) platform.direction = Math.random() < 0.5 ? -1 : 1; // -1 for up, 1 for down
+
+            platform.y += platform.speed * platform.direction * deltaSeconds;
+
+            // Reverse direction if platform hits the min or max boundaries
+            if (platform.y <= platform.minY) { // If platform has reached its minimum Y boundary
+                platform.y = platform.minY; // Reset to minY
+                platform.direction = 1; // Change direction to down
+            } else if (platform.y >= platform.maxY) { // If platform has reached its maximum Y boundary
+                platform.y = platform.maxY; // Reset to maxY
+                platform.direction = -1; // Change direction to up
+            }
+            }
+
         // Check platform type
         if (platform.type === 'blue') {
             // Ensure speed and direction are defined for each blue platform
@@ -362,7 +397,7 @@ function loop(timestamp) {
     context.drawImage(currentImage, doodle.x, doodle.y, doodle.width, doodle.height);
     
     let verticalDistance = doodle.y - doodle.previousY;
-    if (verticalDistance < 0) { // Only increment score when moving upwards
+    if (verticalDistance < 0 && !pause) { // Only increment score when moving upwards
         score += Math.abs(verticalDistance) * 0.01; // Adjust the multiplier to control score speed
     }
     prevDoodleY = doodle.y;
