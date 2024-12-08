@@ -1,43 +1,53 @@
-<!DOCTYPE html>
 <html>
-
 <head>
     <title>Basic Doodle Jump HTML Game</title>
     <meta charset="UTF-8">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-        }
-
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        canvas {
-            border: 1px solid black;
-        }
-
-        #score {
-            position: fixed;
-            left: calc(50% - 420px);
-            top: 40px;
-            background-color: white;
-            width: 70px;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <canvas width="900" height="800" id="game"></canvas>
-    <span id="score">0</span>
+    <!-- Homepage -->
+    <div id="background">
+        <img id="topImage" src="https://blooket1.pages.dev/drive.google.com/images/doodlejump.png" alt="Top Image">
+        <h1>Doodle Jump</h1>
+        <div id="platform"></div>
+        <div id="character"></div>
+        <button id="playButton" onclick="background.style.display = 'none';gamePage.style.display = 'block';requestAnimationFrame(loop);pause=false">Play</button>
+        <button class="menu" onclick="menu();">☰</button>
+        <button class="leaderboard" onclick="leaderboard()">🏆</button>
+    </div>
+
+    <div id="gamePage" style="display: none;">
+        <canvas id="game" width="900" height="800"></canvas>
+        <span id="score">0</span>
+        <button class="menu" onclick="menu()">☰</button>
+        <button class="leaderboard" onclick="leaderboard()">🏆</button>
+    </div>
+
+    <div id="menu" style="display: none;">
+        hi
+        <button onclick="document.getElementById('menu').style.display = 'none';pause=false;requestAnimationFrame(loop)">X</button>
+        <button onclick="gamePage.style.display = 'none';background.style.display = 'block';requestAnimationFrame(loop);document.getElementById('menu').style.display = 'none';">Exit to menu</button>
+    </div>
     <script>
-        var tickRate = 30;
+// Get elements
+const playButton = document.getElementById('playButton');
+const background = document.getElementById('background');
+const gamePage = document.getElementById('gamePage');
+const scoreElement = document.getElementById('score');
+
+function menu() {
+    pause = true
+    document.getElementById("menu").style.display = "block"
+}
+function leaderboard() {
+    pause = true
+    document.getElementById("leaderboard").style.display = "block"
+}
+
+pause = false
+let lastTimestamp = 0;  // Initialize timestamp for deltaTime
+var tickRate = 30;
 var score = 0
 var keyDown = {};
 var keyMap = {
@@ -55,23 +65,28 @@ $('body').keyup(function (e) {
     keyDown[keyMap[e.which]] = false;
 });
 
+window.addEventListener("resize", () => {
+    document.getElementById("score").style.left = `${(canvas.offsetWidth / 2) + 15}px`;
+    document.getElementById("score").style.top = "10px";
+});
+
 const canvas = document.getElementById('game'); 
 const context = canvas.getContext('2d');
 
 const platformImage = new Image();
-platformImage.src = 'https://quizizzdoodle.pages.dev/platform.png'; 
+platformImage.src = 'platform.png'; 
 
 const blueplatformImage = new Image();
-blueplatformImage.src = 'https://quizizzdoodle.pages.dev/blue platform.png'; 
+blueplatformImage.src = 'blue platform.png'; 
 
 const whiteplatformImage = new Image();
-whiteplatformImage.src = 'https://quizizzdoodle.pages.dev/white platform.png'; 
+whiteplatformImage.src = 'white platform.png'; 
 
 const brownplatformImage = new Image();
-brownplatformImage.src = 'https://quizizzdoodle.pages.dev/brown platform.png'; 
+brownplatformImage.src = 'brown platform.png'; 
 
 const doodleImage = new Image();
-doodleImage.src = 'https://quizizzdoodle.pages.dev/doodle normal.png'; 
+doodleImage.src = 'doodle normal.png'; 
 
 const currentImage = new Image();
 currentImage.src = doodleImage.src
@@ -83,16 +98,16 @@ const doodlewithflyinghatImage = new Image();
 doodlewithflyinghatImage.src = 'https://i.ibb.co/vdBTYQb/Untitled-design-2.png#quizizz'; 
 
 const backgroundImage = new Image();
-backgroundImage.src = 'https://quizizzdoodle.pages.dev/backround.png';
+backgroundImage.src = 'backround.png';
 
 const springImage = new Image();
-springImage.src = 'https://quizizzdoodle.pages.dev/spring.png'; 
+springImage.src = 'spring.png'; 
 
 const jetpackImage = new Image();
-jetpackImage.src = 'https://quizizzdoodle.pages.dev/jetpack.png'; 
+jetpackImage.src = 'jetpack.png'; 
 
 const flyinghatImage = new Image();
-flyinghatImage.src = 'https://quizizzdoodle.pages.dev/flying hat.png'; 
+flyinghatImage.src = 'flying hat.png'; 
 
 const platformWidth = 65;
 const platformHeight = 20;
@@ -160,10 +175,6 @@ let prevDoodleY = doodle.y;
 
 function resetGame() {
     score = 0;
-    doodle.x = canvas.width / 2 - 20;
-    doodle.y = platformStart - 60;
-    doodle.dx = 0;
-    doodle.dy = 0;
     playerDir = 0;
     minPlatformSpace = 15;
     maxPlatformSpace = 20;
@@ -182,20 +193,31 @@ function resetGame() {
     keyDown = {}
 }
 
-function loop() {
-    requestAnimationFrame(loop);
+function loop(timestamp) {
+    const deltaTime = timestamp - lastTimestamp;  // Calculate the time difference between frames
+    lastTimestamp = timestamp;  // Update lastTimestamp for the next frame
+
+    const deltaSeconds = deltaTime / 15; // Convert deltaTime to seconds for easier handling
+
+    if (!pause) {
+        requestAnimationFrame(loop);
+    }
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
-    doodle.dy += gravity;
+    doodle.dy += gravity * deltaSeconds;
     if (doodle.y > canvas.height) {
-        alert("Game Over!");
+        // alert("Game Over!");
+        doodle.x = canvas.width / 2 - 20;
+        doodle.y = platformStart - 250;
+        doodle.dx = 0;
+        doodle.dy = 0;
         resetGame();
     }
 
     if (doodle.y < canvas.height / 2 && doodle.dy < 0) {
         platforms.forEach(function(platform) {
-            platform.y += -doodle.dy;
+            platform.y += -doodle.dy * deltaSeconds;;
         });
         document.getElementById("score").innerText = Math.round(score);
 
@@ -224,13 +246,14 @@ function loop() {
                 x: random(25, canvas.width - 25 - platformWidth),
                 y: platforms[platforms.length - 1].y - (platformHeight + random(minPlatformSpace, maxPlatformSpace)),
                 type: platformType,
+                powerup: powerup // Add the powerup property here
             });
             minPlatformSpace += 0.03;
             maxPlatformSpace += 0.03;
             maxPlatformSpace = Math.min(maxPlatformSpace, canvas.height / 2);
         }
     } else {
-        doodle.y += doodle.dy;
+        doodle.y += doodle.dy * deltaSeconds;
     }
 
     if (!keydown) {
@@ -249,7 +272,7 @@ function loop() {
         }
     }
 
-    doodle.x += doodle.dx;
+    doodle.x += doodle.dx * deltaSeconds;
 
     if (doodle.x + doodle.width < 0) {
         doodle.x = canvas.width;
@@ -273,7 +296,7 @@ function loop() {
             if (!platform.hasOwnProperty('direction')) platform.direction = Math.random() < 0.5 ? -1 : 1;; // 1 for right, -1 for left
     
     
-            platform.x += platform.speed * platform.direction;
+            platform.x += platform.speed * platform.direction * deltaSeconds;
     
             // Reverse direction if it hits the edges
             if (platform.x < 0) {
@@ -370,8 +393,7 @@ var tick = function () {
 
 tick();
 // start the game loop
-requestAnimationFrame(loop);
-    </script>
+</script>
 </body>
 
 </html>

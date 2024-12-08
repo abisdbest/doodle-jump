@@ -1,0 +1,167 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+canvas {
+    bottom: 0;
+    width: 50vw;
+    /* 50% of the viewport width */
+    height: calc(100vh - 1px);
+    /* 100% of the viewport height */
+    border: 1px solid black;
+}
+
+#score {
+    position: fixed;
+    left: calc(50vw - 355px);
+    top: 10px;
+    background-color: white;
+    width: 70px;
+    text-align: center;
+}
+
+#background {
+    position: fixed;
+    width: 50%;
+    height: 100vh;
+    left: 25%;
+    top: 0;
+    background-image: url('backround.png');
+    background-size: cover;
+    background-position: center;
+    /*Needed to position the other elements*/
+}
+
+#topImage {
+    /* Added for top image */
+    position: absolute;
+    top: 20px;
+    /* Adjust as needed */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    /* Adjust as needed */
+}
+
+h1 {
+    position: fixed;
+    left: calc(50% - 100px);
+    top: 45%;
+}
+
+#platform {
+    /* Added for the platform */
+    width: 200px;
+    height: 50px;
+    background-image: url('https://quizizzdoodle.pages.dev/platform.png');
+    /* Replace with your platform image URL */
+    background-size: cover;
+    position: absolute;
+    bottom: 120px;
+    left: 20%;
+    transform: translateX(-50%);
+}
+
+#character {
+    width: 150px;
+    height: 170px;
+    background-image: url('https://quizizzdoodle.pages.dev/doodle normal.png');
+    background-size: contain;
+    position: absolute;
+    bottom: 350px;
+    /* Adjusted to be above the platform */
+    left: calc(20% - 80px);
+    animation: bounce 0.5s;
+    animation-direction: alternate;
+    animation-timing-function: cubic-bezier(.5, 0.05, 1, .5);
+    animation-iteration-count: infinite;
+}
+
+@keyframes bounce {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+
+    to {
+        transform: translate3d(0, 200px, 0);
+    }
+}
+
+#playButton {
+    position: absolute;
+    top: 60%;
+    /*Adjusted position*/
+    left: calc(50% - 50px);
+    transform: translate(-50%, -50%);
+    padding: 15px 30px;
+    font-size: 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    animation: moveUpAndDown 2s ease-in-out infinite;
+}
+
+.menu {
+    position: fixed;
+    top: 5px;
+    right: calc(25% + 5px);
+    height: 50px;
+    width: 50px;
+    background-color: green;
+    color: lightgreen;
+    border: solid black 3px;
+    border-radius: 10px;
+    font-size: 25px;
+    text-align: center;
+}
+
+#menu {
+    position: fixed;
+    top: 5px;
+    right: calc(25% + 5px);
+    height: 50px;
+    width: 30%;
+    background-color: green;
+    color: lightgreen;
+    border: solid black 3px;
+    border-radius: 10px;
+    font-size: 25px;
+    text-align: center;
+}
+
+.leaderboard {
+    position: fixed;
+    top: 60px;
+    right: calc(25% + 5px);
+    height: 50px;
+    width: 50px;
+    background-color: green;
+    color: lightgreen;
+    border: solid black 3px;
+    border-radius: 10px;
+    font-size: 25px;
+    text-align: center;
+}
+
+@keyframes moveUpAndDown {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(10px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
