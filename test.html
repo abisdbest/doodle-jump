@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doodle Jump Score Tester</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 20px;
+    }
+    input, button {
+      margin: 5px 0;
+      padding: 10px;
+      font-size: 1rem;
+    }
+    #results {
+      margin-top: 20px;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Doodle Jump Score Tester</h1>
+
+  <h2>Submit a Score</h2>
+  <form id="submitScoreForm">
+    <label for="username">Username:</label><br>
+    <input type="text" id="username" name="username" required><br>
+
+    <label for="score">Score:</label><br>
+    <input type="number" id="score" name="score" required><br>
+
+    <button type="submit">Submit Score</button>
+  </form>
+
+  <h2>Get User High Score</h2>
+  <form id="getUserScoreForm">
+    <label for="getUsername">Username:</label><br>
+    <input type="text" id="getUsername" name="getUsername" required><br>
+
+    <button type="submit">Get Score</button>
+  </form>
+
+  <h2>Get Leaderboard</h2>
+  <button id="getLeaderboard">Get Leaderboard</button>
+
+  <div id="results">
+    <h3>Results:</h3>
+    <pre id="resultOutput">Waiting for input...</pre>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'https://quizizzdoodlescores.arielblau2.workers.dev'; // Replace with your Worker URL
+
+    // Helper function to update results
+    function updateResults(output) {
+      document.getElementById('resultOutput').textContent = JSON.stringify(output, null, 2);
+    }
+
+    // Submit a new score
+    document.getElementById('submitScoreForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const score = parseInt(document.getElementById('score').value, 10);
+        alert(JSON.stringify({ username, score }))
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/score`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, score })
+        });
+
+        const result = await response.text();
+        updateResults(result);
+      } catch (error) {
+        updateResults({ error: error.message });
+      }
+    });
+
+    // Get user high score
+    document.getElementById('getUserScoreForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('getUsername').value;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/user/${username}`);
+        const result = await response.json();
+        updateResults(result);
+      } catch (error) {
+        updateResults({ error: error.message });
+      }
+    });
+
+    // Get leaderboard
+    document.getElementById('getLeaderboard').addEventListener('click', async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/leaderboard`);
+        const result = await response.json();
+        updateResults(result);
+      } catch (error) {
+        updateResults({ error: error.message });
+      }
+    });
+  </script>
+</body>
+</html>
