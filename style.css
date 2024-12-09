@@ -211,6 +211,46 @@ h1 {
     text-align: center;
 }
 
+#leaderboard {
+    font-family: "Indie Flower", serif;
+    font-weight: 400;
+    position: fixed;
+    top: 50px;
+    right: 35%;
+    height: calc(100% - 150px);
+    width: 30%;
+    background-color: green;
+    color: lightgreen;
+    border: solid black 3px;
+    border-radius: 10px;
+    font-size: 25px;
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* Keep the flex container in column layout */
+    justify-content: flex-end; /* Push the buttons to the bottom */
+    align-items: center; /* Center the buttons horizontally */
+}
+
+#leaderboard > div > button:not(.exitbutton) {
+    font-family: "Indie Flower", serif;
+    font-weight: 900;
+    font-size: 20px;
+    border-radius: 10px;
+    border: solid black 1px;
+    background-color: #4CAF50;
+    height: 40px;
+    width: auto; /* Allow the width to adjust based on the content */
+    margin-right: 10px; /* Adds space between buttons */
+    margin-bottom: 30px;
+}
+
+#leaderboard > div {
+    display: flex; /* Use flexbox to display the buttons horizontally */
+    justify-content: flex-start; /* Align buttons to the left side */
+    gap: 10px; /* Add space between buttons */
+}
+
+
 @keyframes moveUpAndDown {
     0% {
         transform: translateY(0);

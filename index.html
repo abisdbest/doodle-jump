@@ -34,6 +34,16 @@
         <button onclick="pause = false; document.getElementById('menu').style.display = 'none'; resetGame()">restart</button>
         <button onclick="gamePage.style.display = 'none';background.style.display = 'block';document.getElementById('menu').style.display = 'none';">Exit to menu</button>
     </div>
+
+    <div id="leaderboard" style="display: none;">
+        <button onclick="document.getElementById('leaderboard').style.display = 'none';pause=false;doodle.dy = oldvelocity" class="exitbutton">X</button>
+        <h3>Your current score is:</h2>
+        <div>
+            <button onclick="displayuserscores()">Your top scores</button>
+            <button onclick="displayglobalscores()">Global scores</button>
+            <button onclick="displaysettings()" style="background-color: #afa34c; color: transparent; text-shadow: 0 0 0 black">⚙️</button>
+        </div>
+    </div>
     <script>
 // Get elements
 const playButton = document.getElementById('playButton');
