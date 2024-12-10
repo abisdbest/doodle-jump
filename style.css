@@ -28,14 +28,14 @@ canvas {
 }
 
 #score {
-    position: fixed;
-    left: calc(50vw - 355px);
-    top: 10px;
     background-color: white;
     width: 70px;
     text-align: center;
     font-weight: 800;
     font-size: 25px;
+    position: fixed;
+    top: 10px;
+    left: calc(25% + 10px);
 }
 
 #background {
@@ -82,7 +82,7 @@ h1 {
 
 #character {
     width: 150px;
-    height: 170px;
+    height: 156px;
     background-image: url('https://quizizzdoodle.pages.dev/doodle normal.png');
     background-size: contain;
     position: absolute;
@@ -250,6 +250,86 @@ h1 {
     gap: 10px; /* Add space between buttons */
 }
 
+#leaderboard > h3 {
+    position: relative;
+    font-size: 20px;
+    margin: 0;
+}
+
+#localscores, #globalscores, #settings {
+    background-color: #318333;
+    border-top-left-radius: 255px 5px;
+    border-top-right-radius: 5px 225px;
+    border-bottom-right-radius: 225px 5px;
+    border-bottom-left-radius:5px 255px;
+    border: solid 2px #41403E;
+    width: 80%;
+    margin-bottom: 10px;
+    height: 60%;
+}
+
+ol {
+    list-style: none; /* Remove the default numbers */
+    padding-left: 0; /* Adjust padding to align content */
+}
+
+ol > li {
+    position: relative; /* Needed for ::before positioning */
+}
+
+ol > li::before {
+    content: counter(list-item) "."; /* Display the number */
+    counter-increment: 1; /* Increment the number automatically */
+    position: absolute; /* Position it independently */
+    left: 0; /* Align to the left */
+    top: 0; /* Align with the text */
+    background-color: green; /* Add background color */
+    color: #afa34c; /* Change the number color */
+    font-weight: bold; /* Make it bold */
+    padding: 0 8px; /* Add padding around the number */
+    border-radius: 100px; /* Rounded corners */
+    border: solid black 2px;
+    margin-left: 20px;
+}
+
+ol > li:nth-child(1)::before {
+    background-color: gold; /* Background for the first item */
+    color: white; /* Text color for the first item */
+}
+
+ol > li:nth-child(2)::before {
+    background-color: gray; /* Background for the second item */
+    color: white; /* Text color for the second item */
+}
+
+ol > li:nth-child(3)::before {
+    background-color: #CD7F32; /* Background for the third item */
+    color: white; /* Text color for the third item */
+}
+
+#customusername {
+    font-family: "Indie Flower", serif;
+    font-weight: 900;
+    font-size: 15px;
+    padding: 5px 5px 5px 20px;
+    outline: none;
+    border-radius: 10px;
+    border: solid black 1px;
+    background-color: #4CAF50;
+    height: 40px;
+    width: 60%; /* Allow the width to adjust based on the content */
+    margin-right: 20px;
+    margin-top: 30px;
+}
+
+#customusername::placeholder {
+    color: rgb(62, 62, 62);
+}
+
+#settings button {
+    background-color: #246025;
+    width: 10%;
+}
 
 @keyframes moveUpAndDown {
     0% {
