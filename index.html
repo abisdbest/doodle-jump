@@ -56,17 +56,21 @@
         </div>
     </div>
     <script>
-fetch("https://quizizzdoodlescores.arielblau2.workers.dev/leaderboard")
-.then(response => response.json())
-.then(data => {
-    let i = 1;
-    let randomusername;
-    do {
-        randomusername = `doodler${i.toString().padStart(5, '0')}`;
-        i++;
-    } while (data.some(item => item.username === randomusername));
-    localStorage.setItem('username', randomusername);
-});
+var username = localStorage.getItem('username');
+if (!username) {
+    fetch("https://quizizzdoodlescores.arielblau2.workers.dev/leaderboard")
+    .then(response => response.json())
+    .then(data => {
+        let i = 1;
+        let randomusername;
+        do {
+            randomusername = `doodler${i.toString().padStart(5, '0')}`;
+            i++;
+        } while (data.some(item => item.username === randomusername));
+        localStorage.setItem('username', randomusername);
+    });
+}
+
 // Get elements
 const playButton = document.getElementById('playButton');
 const background = document.getElementById('background');
