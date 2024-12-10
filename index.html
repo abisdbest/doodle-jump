@@ -39,7 +39,7 @@
 
     <div id="leaderboard" style="display: none;">
         <button onclick="document.getElementById('leaderboard').style.display = 'none';pause=false;doodle.dy = oldvelocity" class="exitbutton">X</button>
-        <h3>Your rank globaly is:</h2>
+        <h3>Your rank globally is:</h2>
         <p><span id="globalpos"></span> th place</p>
         <div id="localscores" style="display: none; overflow: scoll; height: 50%">
           <ol id="localscoresol">
@@ -87,6 +87,7 @@ function menu() {
 function leaderboard() {
     pause = true
     document.getElementById("leaderboard").style.display = "flex"
+    displayuserscores()
 }
 async function displayuserscores() {
     document.getElementById("localscores").style.display = "block";
