@@ -289,11 +289,12 @@ function loop(timestamp) {
         doodle.y = platformStart - 250;
         doodle.dx = 0;
         doodle.dy = 0;
+        score = Math.round(score)
         // save score in server
         fetch("https://quizizzdoodlescores.arielblau2.workers.dev/score", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, Math.round(score) })
+          body: JSON.stringify({ username, score })
         });
         resetGame();
     }
