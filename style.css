@@ -331,6 +331,10 @@ ol > li:nth-child(3)::before {
     width: 10%;
 }
 
+select * {
+    font-family: "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", sans-serif;
+}
+
 @keyframes moveUpAndDown {
     0% {
         transform: translateY(0);
