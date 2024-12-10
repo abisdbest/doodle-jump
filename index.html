@@ -93,6 +93,7 @@ async function displayuserscores() {
     document.getElementById("localscores").style.display = "block";
 }
 async function displayglobalscores() {
+    document.getElementById("settings").style.display = "none";
     document.getElementById("localscores").style.display = "none";
     document.getElementById("globalscores").style.display = "block";
     const response = await fetch("https://quizizzdoodlescores.arielblau2.workers.dev/leaderboard");
@@ -102,7 +103,7 @@ async function displayglobalscores() {
         listItems += `<li>${item.username}: ${item.score}</li>`;
     });
     document.getElementById("globalscoresol").innerHTML = listItems;
-    const position = findPosition(data, "doodler00002");
+    const position = findPosition(data, username);
     document.getElementById("globalpos").innerText = position - data.length + 1
 T
 }
@@ -110,6 +111,7 @@ function findPosition(dataArray, username) {
   return dataArray.map(item => [item.username, item.score]).sort(([, a], [, b]) => a - b).findIndex(([k]) => k === username) + 1;
 }
 async function displaylocalscores() {
+    document.getElementById("settings").style.display = "none";
     document.getElementById("localscores").style.display = "block";
     document.getElementById("globalscores").style.display = "none";
     const response = await fetch("https://quizizzdoodlescores.arielblau2.workers.dev/user/" + username);
@@ -124,6 +126,11 @@ async function displaylocalscores() {
       }
     });
     document.getElementById("localscoresol").innerHTML = listItems;
+}
+function displaysettings() {
+    document.getElementById("localscores").style.display = "none";
+    document.getElementById("globalscores").style.display = "none";
+    document.getElementById("settings").style.display = "block";
 }
 pause = false
 let lastTimestamp = 0;  // Initialize timestamp for deltaTime
