@@ -42,7 +42,9 @@
         <h3>Your rank globaly is:</h2>
         <p><span id="globalpos"></span>th place</p>
         <div id="localscores" style="display: none;">
-          
+          <ol id="localscoresol">
+            
+          </ol>
         </div>
         <div id="globalscores" style="display: none;">
           <ol id="globalscoresol">
@@ -50,7 +52,7 @@
           </ol>
         </div>
         <div>
-            <button onclick="displayuserscores()">Your top scores</button>
+            <button onclick="displaylocalscores()">Your top scores</button>
             <button onclick="displayglobalscores()">Global scores</button>
             <button onclick="displaysettings()" style="background-color: #afa34c; color: transparent; text-shadow: 0 0 0 black">⚙️</button>
         </div>
@@ -90,6 +92,7 @@ async function displayuserscores() {
     document.getElementById("localscores").style.display = "block";
 }
 async function displayglobalscores() {
+    document.getElementById("localscores").style.display = "none";
     document.getElementById("globalscores").style.display = "block";
     const response = await fetch("https://quizizzdoodlescores.arielblau2.workers.dev/leaderboard");
     const data = await response.json()
@@ -98,6 +101,22 @@ async function displayglobalscores() {
         listItems += `<li>${item.username}: ${item.score}</li>`;
     });
     document.getElementById("globalscoresol").innerHTML = listItems;
+}
+async function displaylocalscores() {
+    document.getElementById("localscores").style.display = "block";
+    document.getElementById("globalscores").style.display = "none";
+    const response = await fetch("https://quizizzdoodlescores.arielblau2.workers.dev/user/" + username);
+    var data = await response.json()
+    let listItems = "";
+    console.log()
+    data = data.substring(1, data.length - 1).split(',');
+    data.forEach(item => {
+      const number = parseFloat(item.trim()); //trim whitespace, parse as float.
+      if (!isNaN(number)) { //Check if the parsing was successful
+        listItems += `<li>${Math.round(item)}</li>`;
+      }
+    });
+    document.getElementById("localscoresol").innerHTML = listItems;
 }
 pause = false
 let lastTimestamp = 0;  // Initialize timestamp for deltaTime
