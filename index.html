@@ -40,13 +40,13 @@
     <div id="leaderboard" style="display: none;">
         <button onclick="document.getElementById('leaderboard').style.display = 'none';pause=false;doodle.dy = oldvelocity" class="exitbutton">X</button>
         <h3>Your rank globaly is:</h2>
-        <p><span id="globalpos"></span>th place</p>
-        <div id="localscores" style="display: none;">
+        <p><span id="globalpos"></span> th place</p>
+        <div id="localscores" style="display: none; overflow: scoll; height: 50%">
           <ol id="localscoresol">
             
           </ol>
         </div>
-        <div id="globalscores" style="display: none;">
+        <div id="globalscores" style="display: none; overflow: scoll; height: 50%">
           <ol id="globalscoresol">
             
           </ol>
@@ -101,6 +101,12 @@ async function displayglobalscores() {
         listItems += `<li>${item.username}: ${item.score}</li>`;
     });
     document.getElementById("globalscoresol").innerHTML = listItems;
+    const position = findPosition(data, "doodler00002");
+    document.getElementById("globalpos").innerText = position - data.length + 1
+T
+}
+function findPosition(dataArray, username) {
+  return dataArray.map(item => [item.username, item.score]).sort(([, a], [, b]) => a - b).findIndex(([k]) => k === username) + 1;
 }
 async function displaylocalscores() {
     document.getElementById("localscores").style.display = "block";
