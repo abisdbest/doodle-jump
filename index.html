@@ -293,7 +293,7 @@ function loop(timestamp) {
         fetch("https://quizizzdoodlescores.arielblau2.workers.dev/score", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, score })
+          body: JSON.stringify({ username, Math.round(score) })
         });
         resetGame();
     }
@@ -301,6 +301,7 @@ function loop(timestamp) {
     if (doodle.y < canvas.height / 2 && doodle.dy < 0) {
         platforms.forEach(function(platform) {
             platform.y += -doodle.dy * deltaSeconds;;
+            score += -doodle.dy * deltaSeconds
         });
         document.getElementById("score").innerText = Math.round(score);
 
@@ -469,10 +470,6 @@ function loop(timestamp) {
     // Draw doodle
     context.drawImage(currentImage, doodle.x, doodle.y, doodle.width, doodle.height);
     
-    let verticalDistance = doodle.y - doodle.previousY;
-    if (verticalDistance < 0 && !pause) { // Only increment score when moving upwards
-        score += Math.abs(verticalDistance) * 0.01; // Adjust the multiplier to control score speed
-    }
     prevDoodleY = doodle.y;
 
     // Remove offscreen platforms
