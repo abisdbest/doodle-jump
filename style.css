@@ -231,7 +231,7 @@ h1 {
     align-items: center; /* Center the buttons horizontally */
 }
 
-#leaderboard > div > button:not(.exitbutton) {
+#leaderboard > div > button:not(.exitbutton, #customusernamebtn) {
     font-family: "Indie Flower", serif;
     font-weight: 900;
     font-size: 20px;
@@ -266,6 +266,7 @@ h1 {
     width: 80%;
     margin-bottom: 10px;
     height: 60%;
+    overflow: auto;
 }
 
 ol {
@@ -317,8 +318,7 @@ ol > li:nth-child(3)::before {
     border: solid black 1px;
     background-color: #4CAF50;
     height: 40px;
-    width: 60%; /* Allow the width to adjust based on the content */
-    margin-right: 20px;
+    width: 80%; /* Allow the width to adjust based on the content */
     margin-top: 30px;
 }
 
@@ -326,13 +326,43 @@ ol > li:nth-child(3)::before {
     color: rgb(62, 62, 62);
 }
 
-#settings button {
-    background-color: #246025;
-    width: 10%;
+#customusernamebtn {
+    background-color: #afa34c;
+    width: 80%;
+    margin-top: 20px;
+    border: none;
+    border-radius: 10px;
+}
+
+select {
+    width: 80%;
+    height: 30px;
+    background-color: #4CAF50;
+    border: solid black 1px;
+    border-radius: 10px;
 }
 
 select * {
-    font-family: "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", sans-serif;
+    width: 80%;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #afa34c;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: #7c7436;
+    border: 2.5px solid transparent; /* Create a border */
+    background-clip: padding-box; /* Only apply background to padding */
 }
 
 @keyframes moveUpAndDown {
