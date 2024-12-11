@@ -17,7 +17,7 @@
         <h1>Doodle Jump 2</h1>
         <div id="platform"></div>
         <div id="character"></div>
-        <button id="playButton" onclick="background.style.display = 'none';gamePage.style.display = 'block';requestAnimationFrame(loop);pause=false">Play</button>
+        <button id="playButton" onclick="background.style.display = 'none';gamePage.style.display = 'block';requestAnimationFrame(loop);pause=false;gameStarted = true;">Play</button>
         <button class="menu" onclick="menu();">☰</button>
         <button class="leaderboard" onclick="leaderboard()">🏆</button>
     </div>
@@ -37,11 +37,20 @@
         <button onclick="gamePage.style.display = 'none';background.style.display = 'block';document.getElementById('menu').style.display = 'none';">Exit to menu</button>
     </div>
 
+    <div id="gameover" style="display: none;">
+        <h2>YOU FELL</h2>
+        <h3>Your final score was...</h3>
+        <h3 id="endingscore"></h3>
+        <button onclick="document.getElementById('gameover').style.display = 'none';pause=false;" class="exitbutton">X</button>
+        <button onclick="pause = false; document.getElementById('gameover').style.display = 'none'; resetGame()">restart</button>
+        <button onclick="gamePage.style.display = 'none';background.style.display = 'block';document.getElementById('gameover').style.display = 'none';">Exit to menu</button>
+    </div>
+
     <div id="leaderboard" style="display: none;">
         <button onclick="document.getElementById('leaderboard').style.display = 'none';pause=false;" class="exitbutton">X</button>
         <h3>Your displayed name is: <br><i><u><span id="displayedname"></span></u></i></h2>
         <h3>Your rank globally is:</h2>
-        <p><span id="globalpos"></span> th place</p>
+        <p><span id="globalpos"></span> place</p>
         <div id="localscores" style="display: none; overflow: scoll;">
           <ol id="localscoresol">
             
@@ -56,6 +65,7 @@
             Custom username:
             <input maxlength="12" placeholder="Enter you displayed name" id="customusername">
             <button id="customusernamebtn" onclick="submitcustomusername()">submit</button>
+            <p style="font-size: 20px; margin: 20px;">(please have in mind it could take up to 5 minutes for your new username to save and show up on the leaderboard)</p>
         </div>
         <div>
             <button onclick="displaylocalscores()">Your top scores</button>
@@ -111,7 +121,11 @@ async function displayglobalscores() {
     const data = await response.json()
     let listItems = "";
     data.forEach(item => {
-        listItems += `<li>${item.username}: ${item.score}</li>`;
+        if (item.username == username) {
+            listItems += `<li class='useronleaderboard'>${item.username}: ${item.score}</li>`;
+        } else {
+            listItems += `<li>${item.username}: ${item.score}</li>`;
+        }
     });
     document.getElementById("globalscoresol").innerHTML = listItems;
     const position = findPosition(data, username);
@@ -187,11 +201,18 @@ function submitcustomusername() {
             localStorage.setItem('username', usernamechange);
             document.getElementById("displayedname").innerText = usernamechange
             username = usernamechange
+            fetch("https://quizizzdoodlescores.arielblau2.workers.dev/rename", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ oldUsername: "player123", newUsername: "playerRenamed" })
+            })
+            .then(res => res.ok ? res.json().then(data => alert("Success!")) : res.text().then(err => Promise.reject(err)))       
         }
     })    
 }
 pause = false
 let lastTimestamp = 0;  // Initialize timestamp for deltaTime
+let gameStarted = false;
 var tickRate = 30;
 var score = 0
 var keyDown = {};
@@ -318,6 +339,10 @@ let prevDoodleY = doodle.y;
 
 function resetGame() {
     score = 0;
+    doodle.x = canvas.width / 2 - 20;
+    doodle.y = platformStart - 150;  // Reset higher than initial fall point
+    doodle.dx = 0;
+    doodle.dy = 0;  // Reset velocity to prevent immediate falling
     playerDir = 0;
     minPlatformSpace = 15;
     maxPlatformSpace = 20;
@@ -335,9 +360,13 @@ function resetGame() {
     document.getElementById("score").innerText = score;
     keyDown = {}
 }
-
 function loop(timestamp) {
-    const deltaTime = timestamp - lastTimestamp;  // Calculate the time difference between frames
+    if (!gameStarted) return;
+    const MAX_DELTA_TIME = 60; 
+
+    // If it's been too long since the last frame, limit deltaTime to MAX_DELTA_TIME
+    const deltaTime = Math.min(timestamp - lastTimestamp, MAX_DELTA_TIME);  
+    // alert(deltaTime)
     lastTimestamp = timestamp;  // Update lastTimestamp for the next frame
 
     deltaSeconds = deltaTime / 15; // Convert deltaTime to seconds for easier handling
@@ -351,20 +380,25 @@ function loop(timestamp) {
 
     doodle.dy += gravity * deltaSeconds;
     if (doodle.y > canvas.height) {
-        // alert("Game Over!");
+        console.log("Doodle has fallen off screen, Y:", doodle.y);
         doodle.x = canvas.width / 2 - 20;
         doodle.y = platformStart - 250;
         doodle.dx = 0;
         doodle.dy = 0;
-        score = Math.round(score)
+        score = Math.round(score);
         // save score in server
         fetch("https://quizizzdoodlescores.arielblau2.workers.dev/score", {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, score })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, score })
         });
+        document.getElementById("gameover").style.display = "flex";
+        document.getElementById("endingscore").innerText = score
+        pause = true
         resetGame();
     }
+
+
 
     if (doodle.y < canvas.height / 2 && doodle.dy < 0) {
         platforms.forEach(function(platform) {

@@ -134,7 +134,7 @@ h1 {
     text-align: center;
 }
 
-#menu {
+#menu, #gameover {
     font-family: "Indie Flower", serif;
     font-weight: 400;
     position: fixed;
@@ -254,6 +254,10 @@ h1 {
     position: relative;
     font-size: 20px;
     margin: 0;
+}
+
+.useronleaderboard {
+    background-color: #205921;
 }
 
 #localscores, #globalscores, #settings {
