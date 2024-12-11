@@ -153,6 +153,39 @@ function submitcustomusername() {
       alert("cannot be empty")
       return
     }
+    fetch("https://quizizzdoodlescores.arielblau2.workers.dev/leaderboard")
+    .then(response => response.json())
+    .then(data => {
+        let uniqueUsernames = [];
+        let i = 1;
+
+        while (uniqueUsernames.length < data.length) { // Generate as many usernames as there are users
+            let randomUsername = `User${i}`; // Example username format
+            if (!data.some(item => item.username === randomUsername)) {
+                uniqueUsernames.push(randomUsername); // Add to the list if unique
+            }
+            i++;
+        }
+
+        const customUsername = document.getElementById("customusername").value;
+        let matchFound = false;
+
+        // Check each username against custom username value
+        uniqueUsernames.forEach(username => {
+            if (username === customUsername) {
+                matchFound = true;
+            }
+        });
+
+        // Alert based on whether a match was found
+        if (matchFound) {
+            alert("A match was found!");
+        } else {
+            alert("No matches were found.");
+        }
+    })
+    .catch(error => console.error("Error fetching leaderboard:", error));
+    
     username = document.getElementById("customusername").value + " " + document.getElementById("country").options[document.getElementById("country").selectedIndex].text.slice(0, 4);
     localStorage.setItem('username', username);
     document.getElementById("displayedname").innerText = username
