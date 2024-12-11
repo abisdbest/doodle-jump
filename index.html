@@ -41,7 +41,7 @@
         <button onclick="document.getElementById('leaderboard').style.display = 'none';pause=false;" class="exitbutton">X</button>
         <h3>Your displayed name is: <br><i><u><span id="displayedname"></span></u></i></h2>
         <h3>Your rank globally is:</h2>
-        <p><span id="globalpos"></span> th place</p>
+        <p><span id="globalpos"></span> place</p>
         <div id="localscores" style="display: none; overflow: scoll;">
           <ol id="localscoresol">
             
@@ -115,9 +115,22 @@ async function displayglobalscores() {
     });
     document.getElementById("globalscoresol").innerHTML = listItems;
     const position = findPosition(data, username);
-    console.log("position in list:", await position)
-    console.log("list length:", await data.length)
-    document.getElementById("globalpos").innerText = data.length - position + 1
+
+    const calculatedPosition = data.length - position + 1;
+    document.getElementById("globalpos").innerText = calculatedPosition;
+
+    // Determine the suffix
+    let suffix = "th";
+    if (calculatedPosition % 10 === 1 && calculatedPosition % 100 !== 11) {
+        suffix = "st";
+    } else if (calculatedPosition % 10 === 2 && calculatedPosition % 100 !== 12) {
+        suffix = "nd";
+    } else if (calculatedPosition % 10 === 3 && calculatedPosition % 100 !== 13) {
+        suffix = "rd";
+    }
+
+    // Append the suffix
+    document.getElementById("globalpos").innerText += ` ${suffix}`;
 }
 function findPosition(dataArray, username) {
   return dataArray.map(item => [item.username, item.score]).sort(([, a], [, b]) => a - b).findIndex(([k]) => k === username) + 1;
