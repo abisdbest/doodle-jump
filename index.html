@@ -158,7 +158,6 @@ function submitcustomusername() {
     .then(data => {
         let uniqueUsernames = [];
         let i = 1;
-
         while (uniqueUsernames.length < data.length) { // Generate as many usernames as there are users
             let randomUsername = `User${i}`; // Example username format
             if (!data.some(item => item.username === randomUsername)) {
@@ -166,10 +165,8 @@ function submitcustomusername() {
             }
             i++;
         }
-
         const customUsername = document.getElementById("customusername").value;
         let matchFound = false;
-
         // Check each username against custom username value
         uniqueUsernames.forEach(username => {
             if (username === customUsername) {
@@ -179,16 +176,14 @@ function submitcustomusername() {
 
         // Alert based on whether a match was found
         if (matchFound) {
-            alert("A match was found!");
+            alert("that name already exists")
+            return
         } else {
-            alert("No matches were found.");
+            username = document.getElementById("customusername").value + " " + document.getElementById("country").options[document.getElementById("country").selectedIndex].text.slice(0, 4);
+            localStorage.setItem('username', username);
+            document.getElementById("displayedname").innerText = username
         }
-    })
-    .catch(error => console.error("Error fetching leaderboard:", error));
-    
-    username = document.getElementById("customusername").value + " " + document.getElementById("country").options[document.getElementById("country").selectedIndex].text.slice(0, 4);
-    localStorage.setItem('username', username);
-    document.getElementById("displayedname").innerText = username
+    })    
 }
 pause = false
 let lastTimestamp = 0;  // Initialize timestamp for deltaTime
