@@ -149,7 +149,7 @@ function displaysettings() {
     document.getElementById("settings").style.display = "block";
 }
 function submitcustomusername() {
-    username = document.getElementById("customusername").value
+    usernamechange = document.getElementById("customusername").value
     if (document.getElementById("customusername").value == "") {
       alert("cannot be empty")
       return
@@ -167,7 +167,7 @@ function submitcustomusername() {
         let matchFound = false;
         // Check each username against custom username value
         uniqueUsernames.forEach(usernameinlist => {
-            if (usernameinlist === username) {
+            if (usernameinlist === usernamechange) {
                 matchFound = true;
             }
         });
@@ -177,8 +177,9 @@ function submitcustomusername() {
             alert("that name already exists")
             return
         } else {
-            localStorage.setItem('username', username + " " + document.getElementById("country").options[document.getElementById("country").selectedIndex].text.slice(0, 4));
-            document.getElementById("displayedname").innerText = username + " " + document.getElementById("country").options[document.getElementById("country").selectedIndex].text.slice(0, 4);
+            localStorage.setItem('username', usernamechange + " " + document.getElementById("country").options[document.getElementById("country").selectedIndex].text.slice(0, 4));
+            document.getElementById("displayedname").innerText = usernamechange + " " + document.getElementById("country").options[document.getElementById("country").selectedIndex].text.slice(0, 4);
+            username = usernamechange
         }
     })    
 }
